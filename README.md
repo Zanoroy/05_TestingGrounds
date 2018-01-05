@@ -35,9 +35,13 @@ Complete each stage by reaching next gateway (check point); If discovered the ga
 ## Initial Requirements
 1. Animated character model
     With custom animations for (this maybe beyond my abilities)
+    
     &nbsp;&nbsp;&nbsp;&nbsp;•  Hiding behind a wall;
+    
     &nbsp;&nbsp;&nbsp;&nbsp;• Throwing items;
+    
     &nbsp;&nbsp;&nbsp;&nbsp;• Peeking corners. 
+    
 2. Static meshes for ninja stars
 3. Static meshes for Supply boxes
 4. Static meshes for Traps
