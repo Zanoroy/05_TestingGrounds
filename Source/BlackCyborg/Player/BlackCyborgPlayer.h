@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "BlackCyborgCharacter.generated.h"
+#include "BlackCyborgPlayer.generated.h"
 
 class UInputComponent;
 
 UCLASS(config=Game)
-class ABlackCyborgCharacter : public ACharacter
+class ABlackCyborgPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -46,7 +46,7 @@ class ABlackCyborgCharacter : public ACharacter
 	class UMotionControllerComponent* L_MotionController;
 
 public:
-	ABlackCyborgCharacter();
+	ABlackCyborgPlayer();
 
 protected:
 	virtual void BeginPlay();

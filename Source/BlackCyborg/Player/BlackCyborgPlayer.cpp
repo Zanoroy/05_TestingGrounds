@@ -1,6 +1,6 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
-#include "BlackCyborgCharacter.h"
+#include "BlackCyborgPlayer.h"
 #include "BlackCyborgProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -14,9 +14,9 @@
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 //////////////////////////////////////////////////////////////////////////
-// ABlackCyborgCharacter
+// ABlackCyborgPlayer
 
-ABlackCyborgCharacter::ABlackCyborgCharacter()
+ABlackCyborgPlayer::ABlackCyborgPlayer()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
@@ -83,7 +83,7 @@ ABlackCyborgCharacter::ABlackCyborgCharacter()
 	//bUsingMotionControllers = true;
 }
 
-void ABlackCyborgCharacter::BeginPlay()
+void ABlackCyborgPlayer::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
@@ -107,7 +107,7 @@ void ABlackCyborgCharacter::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void ABlackCyborgCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ABlackCyborgPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
@@ -117,27 +117,27 @@ void ABlackCyborgCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABlackCyborgCharacter::OnFire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABlackCyborgPlayer::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ABlackCyborgCharacter::OnResetVR);
+	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ABlackCyborgPlayer::OnResetVR);
 
 	// Bind movement events
-	PlayerInputComponent->BindAxis("MoveForward", this, &ABlackCyborgCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ABlackCyborgCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ABlackCyborgPlayer::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ABlackCyborgPlayer::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ABlackCyborgCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ABlackCyborgPlayer::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ABlackCyborgCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ABlackCyborgPlayer::LookUpAtRate);
 }
 
-void ABlackCyborgCharacter::OnFire()
+void ABlackCyborgPlayer::OnFire()
 {
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -185,12 +185,12 @@ void ABlackCyborgCharacter::OnFire()
 	}
 }
 
-void ABlackCyborgCharacter::OnResetVR()
+void ABlackCyborgPlayer::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
-void ABlackCyborgCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
+void ABlackCyborgPlayer::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == true)
 	{
@@ -202,7 +202,7 @@ void ABlackCyborgCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, cons
 	TouchItem.bMoved = false;
 }
 
-void ABlackCyborgCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
+void ABlackCyborgPlayer::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == false)
 	{
@@ -218,7 +218,7 @@ void ABlackCyborgCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const 
 //Commenting this section out to be consistent with FPS BP template.
 //This allows the user to turn without using the right virtual joystick
 
-//void ABlackCyborgCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
+//void ABlackCyborgPlayer::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
 //{
 //	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
 //	{
@@ -253,7 +253,7 @@ void ABlackCyborgCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const 
 //	}
 //}
 
-void ABlackCyborgCharacter::MoveForward(float Value)
+void ABlackCyborgPlayer::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
@@ -262,7 +262,7 @@ void ABlackCyborgCharacter::MoveForward(float Value)
 	}
 }
 
-void ABlackCyborgCharacter::MoveRight(float Value)
+void ABlackCyborgPlayer::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
@@ -271,27 +271,27 @@ void ABlackCyborgCharacter::MoveRight(float Value)
 	}
 }
 
-void ABlackCyborgCharacter::TurnAtRate(float Rate)
+void ABlackCyborgPlayer::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
-void ABlackCyborgCharacter::LookUpAtRate(float Rate)
+void ABlackCyborgPlayer::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-bool ABlackCyborgCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
+bool ABlackCyborgPlayer::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
 {
 	if (FPlatformMisc::SupportsTouchInput() || GetDefault<UInputSettings>()->bUseMouseForTouch)
 	{
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ABlackCyborgCharacter::BeginTouch);
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &ABlackCyborgCharacter::EndTouch);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ABlackCyborgPlayer::BeginTouch);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &ABlackCyborgPlayer::EndTouch);
 
 		//Commenting this out to be more consistent with FPS BP template.
-		//PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ABlackCyborgCharacter::TouchUpdate);
+		//PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ABlackCyborgPlayer::TouchUpdate);
 		return true;
 	}
 	
