@@ -50,7 +50,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void OnFire();
+
 	// UPROPERTY(EditAnywhere, Category = "Gameplay")
 	class UAnimInstance* AnimInstance;
 
