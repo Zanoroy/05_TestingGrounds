@@ -1,9 +1,11 @@
 // Bruce Quinton - Copywrite 2018
 
-#include "TIle.h"
-#include "GameFramework/Actor.h"
+#include "Tile.h"
+// #include "GameFramework/Actor.h"
+// #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
-#include "DrawDebugHelpers.h"
+#include "AI/Navigation/NavigationSystem.h"
+#include "ActorPool.h"
 
 // Sets default values
 ATile::ATile()
@@ -21,11 +23,42 @@ void ATile::BeginPlay()
 	IsEmpty(GetActorLocation(), 300);
 }
 
+void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (NavMeshBoundsVolume)
+	{
+		ActorPool->CheckIn(NavMeshBoundsVolume);
+	}
+}
+
 // Called every frame
 void ATile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ATile::SetActorPool(UActorPool * ActorPoolToSet)
+{
+	ActorPool = ActorPoolToSet;
+
+	PositionNavMeshBoundsVolume();
+	NavMeshBoundsVolume;
+}
+
+void ATile::PositionNavMeshBoundsVolume()
+{
+	NavMeshBoundsVolume = ActorPool->CheckOut();
+	if (NavMeshBoundsVolume)
+	{
+		NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavMeshOffset);
+		GetWorld()->GetNavigationSystem()->Build();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor Pool exhausted: NavMeshBoundsVolume is a nullptr"))
+		return;
+	}
 }
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
@@ -38,8 +71,12 @@ void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn,
 		FVector SpawnPoint;
 		if(FindEmptyLocation(SpawnPoint, CheckRadius))
 		{
-			float RndRoatation = FMath::RandRange(-180.f, 180.f);
-			PlaceActor(ToSpawn, SpawnPoint, RndRoatation, RndScale);
+			FSpawnPosition SpawnPoisiton;
+			SpawnPoisiton.Rotation = FMath::RandRange(-180.f, 180.f);
+			SpawnPoisiton.SpawnLocation = SpawnPoint;
+			SpawnPoisiton.RndScale = RndScale;
+
+			PlaceActor(ToSpawn, SpawnPoisiton);
 		}
 		else
 		{
@@ -69,14 +106,9 @@ bool ATile::IsEmpty(FVector Location, float Radius)
 
 bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
 {
-	FVector Min(0, -2000, 0);
-	FVector Max(4000, 2000, 0);
-	FBox Bounds(Min, Max);
-	const int MaxAttempts = 50;
-
-	for (int attempt = 0; attempt < MaxAttempts; attempt++)
+	for (int attempt = 0; attempt < MaxPlacementAttemptsPerActor; attempt++)
 	{
-		FVector SpawnPoint = FMath::RandPointInBox(Bounds);
+		FVector SpawnPoint = FMath::RandPointInBox(SpawnBounds);
 		if (IsEmpty(SpawnPoint, Radius))
 		{
 			OutLocation = SpawnPoint;
@@ -86,12 +118,13 @@ bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
 	return false;
 }
 
-void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint, float Rotation, float RndScale)
+void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition)
 {
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
-	Spawned->SetActorRelativeLocation(SpawnPoint);
-	Spawned->SetActorRotation(FRotator(0.f, Rotation, 0.f));
-	Spawned->SetActorScale3D(FVector(RndScale));
+	Spawned->SetActorRelativeLocation(SpawnPosition.SpawnLocation);
+	Spawned->SetActorRotation(FRotator(0.f, SpawnPosition.Rotation, 0.f));
+	Spawned->SetActorScale3D(FVector(SpawnPosition.RndScale));
+
 }
 
