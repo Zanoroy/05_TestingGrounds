@@ -31,7 +31,10 @@ class BLACKCYBORG_API AGuardGun : public AActor
 
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, Category = "Gameplay")
-	class UAnimMontage* FireAnimation;
+	class UAnimMontage* FireAnimation1P;
+
+	UPROPERTY(EditAnywhere, Category = "Gameplay")
+	class UAnimMontage* FireAnimation3P;
 
 	/** Whether to use motion controller location for aiming. */
 	UPROPERTY(EditAnywhere, Category = "Gameplay")
@@ -46,7 +49,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -54,8 +56,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void OnFire();
 
-	// UPROPERTY(EditAnywhere, Category = "Gameplay")
-	class UAnimInstance* AnimInstance;
-
+	UPROPERTY()
+	class UAnimInstance* AnimInstance1P;
 	
+	UPROPERTY()
+	class UAnimInstance* AnimInstance3P;
+
+
+
 };

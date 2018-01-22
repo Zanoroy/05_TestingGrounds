@@ -4,6 +4,7 @@
 #include "BlackCyborgProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimInstance.h"
+#include "../Character/Mannequin.h"
 
 // Sets default values
 AGuardGun::AGuardGun()
@@ -71,13 +72,14 @@ void AGuardGun::OnFire()
 	}
 
 	// try and play a firing animation if specified
-	if (FireAnimation != NULL)
+	if ((FireAnimation1P != NULL) && (AnimInstance1P != NULL))
 	{
-		// Get the animation object for the arms mesh
-		// UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != NULL)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
+			AnimInstance1P->Montage_Play(FireAnimation1P, 1.f);
+	}
+
+	// try and play a firing animation if specified
+	if ((FireAnimation3P != NULL) && (AnimInstance3P != NULL))
+	{
+		AnimInstance3P->Montage_Play(FireAnimation3P, 1.f);
 	}
 }

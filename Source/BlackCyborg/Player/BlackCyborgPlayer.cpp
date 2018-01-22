@@ -89,7 +89,7 @@ void ABlackCyborgPlayer::BeginPlay()
 		//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 		PlayerGun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 		PlayerGun->SetActorRelativeLocation(GunOffset);
-		PlayerGun->AnimInstance = Mesh1P->GetAnimInstance();
+		PlayerGun->AnimInstance1P = Mesh1P->GetAnimInstance();
 	}
 
 
