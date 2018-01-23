@@ -63,28 +63,40 @@ void ATile::PositionNavMeshBoundsVolume()
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
 {
-	// FMath::RandRange()
+	RandomlyPlace(ToSpawn, MinSpawn, MaxSpawn, Radius, MinScale, MaxScale);
+}
+
+void ATile::PlaceAIPawn(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius)
+{
+	RandomlyPlace(ToSpawn, MinSpawn, MaxSpawn, Radius, 1, 1);
+}
+
+template<class T>
+void ATile::RandomlyPlace(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
+{
 	int NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	for (int i = 0; i < NumberToSpawn; i++) {
 		float RndScale = FMath::RandRange(MinScale, MaxScale);
 		float CheckRadius = MaxScale * Radius;
 		FVector SpawnPoint;
-		if(FindEmptyLocation(SpawnPoint, CheckRadius))
+		if (FindEmptyLocation(SpawnPoint, CheckRadius))
 		{
 			FSpawnPosition SpawnPoisiton;
 			SpawnPoisiton.Rotation = FMath::RandRange(-180.f, 180.f);
 			SpawnPoisiton.SpawnLocation = SpawnPoint;
 			SpawnPoisiton.RndScale = RndScale;
 
-			PlaceActor(ToSpawn, SpawnPoisiton);
+			SpawnItem(ToSpawn, SpawnPoisiton);
 		}
 		else
 		{
 			// If we couldn't find a location for this actor, send a warning through
-			UE_LOG(LogTemp, Warning, TEXT("Unable to place actor: %s"), *ToSpawn->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Unable to place actor: %s - %s"), *ToSpawn->GetName(), *SpawnPoint.ToString());
 		}
 	}
 }
+
+
 
 bool ATile::IsEmpty(FVector Location, float Radius)
 {
@@ -118,13 +130,44 @@ bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
 	return false;
 }
 
-void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition)
+void ATile::SpawnItem(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition)
 {
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
-	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
-	Spawned->SetActorRelativeLocation(SpawnPosition.SpawnLocation);
-	Spawned->SetActorRotation(FRotator(0.f, SpawnPosition.Rotation, 0.f));
-	Spawned->SetActorScale3D(FVector(SpawnPosition.RndScale));
+	if (Spawned)
+	{
+		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
+		Spawned->SetActorRelativeLocation(SpawnPosition.SpawnLocation);
+		Spawned->SetActorRotation(FRotator(0.f, SpawnPosition.Rotation, 0.f));
+		Spawned->SetActorScale3D(FVector(SpawnPosition.RndScale));
+	}
+	else
+	{
+		// If we couldn't find a location for this actor, send a warning through
+		UE_LOG(LogTemp, Warning, TEXT("Unable to place Actor: %s - %s"), *ToSpawn->GetName(), *SpawnPosition.SpawnLocation.ToString());
+	}
+}
 
+void ATile::SpawnItem(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition)
+{	
+	//Set Spawn Collision Handling Override
+	FActorSpawnParameters ActorSpawnParams;
+	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+	APawn* Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn, SpawnPosition.SpawnLocation, FRotator(0.f, SpawnPosition.Rotation, 0.f), ActorSpawnParams);
+	
+	if (Spawned)
+	{
+		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
+		Spawned->SpawnDefaultController();
+		Spawned->SetActorRelativeLocation(SpawnPosition.SpawnLocation);
+		Spawned->SetActorRotation(FRotator(0.f, SpawnPosition.Rotation, 0.f));
+		Spawned->SetActorScale3D(FVector(SpawnPosition.RndScale));
+		Spawned->Tags.Add(FName("Enemy"));
+	}
+	else
+	{
+		// If we couldn't find a location for this actor, send a warning through
+		UE_LOG(LogTemp, Warning, TEXT("Unable to place Pawn: %s - %s"), *ToSpawn->GetName(), *SpawnPosition.SpawnLocation.ToString());
+	}
 }
 

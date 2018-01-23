@@ -34,7 +34,7 @@ public:
 	void PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius = 500.0f, float MinScale = 1.f, float MaxScale = 1.f);
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic AI Pawns")
-	void PlaceAIPawn(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius = 500.0f);
+	void PlaceAIPawn(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius = 10.0f);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,7 +57,12 @@ private:
 	
 	bool FindEmptyLocation(FVector &OutLocation, float Radius);
 
-	void PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition);
+	void SpawnItem(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition);
+	void SpawnItem(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition);
+
+	template<class T>
+	void RandomlyPlace(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale);
+
 	UActorPool* ActorPool = nullptr;
 
 	AActor* NavMeshBoundsVolume = nullptr;
