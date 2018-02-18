@@ -29,6 +29,8 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		ActorPool->CheckIn(NavMeshBoundsVolume);
 	}
+	DestoryAttachedActors();
+
 }
 
 // Called every frame
@@ -96,8 +98,6 @@ void ATile::RandomlyPlace(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpawn, fl
 	}
 }
 
-
-
 bool ATile::IsEmpty(FVector Location, float Radius)
 {
 	FHitResult HitResult;
@@ -133,6 +133,7 @@ bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
 void ATile::SpawnItem(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition)
 {
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
+	
 	if (Spawned)
 	{
 		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
@@ -171,3 +172,16 @@ void ATile::SpawnItem(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition)
 	}
 }
 
+void ATile::DestoryAttachedActors()
+{
+	TArray<AActor*> temp;
+	GetAttachedActors(temp);
+	UE_LOG(LogTemp, Warning, TEXT("Found: %i actors"), temp.Num());
+
+	// auto iterate though all the actors you already have in the TArray
+	for (AActor* CActor : temp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Destroying: %s"), *CActor->GetName());
+		CActor->Destroy();
+	}
+}

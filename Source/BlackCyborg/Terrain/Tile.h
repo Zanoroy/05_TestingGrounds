@@ -25,19 +25,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	// virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Sets default values for this actor's properties
 	ATile();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic Actors")
 	void PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius = 500.0f, float MinScale = 1.f, float MaxScale = 1.f);
 
 	UFUNCTION(BlueprintCallable, Category = "Dynamic AI Pawns")
 	void PlaceAIPawn(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius = 10.0f);
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Actor Pool")
 	void SetActorPool(UActorPool* ActorPoolToSet);
@@ -68,5 +69,6 @@ private:
 	AActor* NavMeshBoundsVolume = nullptr;
 
 	void PositionNavMeshBoundsVolume();
+	void DestoryAttachedActors();
 
 };

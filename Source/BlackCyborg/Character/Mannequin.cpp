@@ -88,6 +88,11 @@ void AMannequin::UnPossessed()
 	}
 }
 
+FGenericTeamId AMannequin::GetGenericTeamId() const
+{
+	return PlayerTeamId;
+}
+
 // Called every frame
 void AMannequin::Tick(float DeltaTime)
 {

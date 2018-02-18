@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Weapons/GuardGun.h"
+#include "GenericTeamAgentInterface.h"
 #include "Mannequin.generated.h"
 
 UCLASS()
-class BLACKCYBORG_API AMannequin : public ACharacter
+class BLACKCYBORG_API AMannequin : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,9 @@ protected:
 
 private:
 
+	UPROPERTY(EditAnywhere, Category = "Team")
+	FGenericTeamId PlayerTeamId = FGenericTeamId(0);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	AGuardGun* Gun;
 
@@ -33,6 +37,8 @@ private:
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
+
+	virtual FGenericTeamId GetGenericTeamId() const override;
 
 public:	
 	// Called every frame
