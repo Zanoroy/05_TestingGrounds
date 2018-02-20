@@ -8,10 +8,10 @@
 ABlackCyborgGameMode::ABlackCyborgGameMode()
 	: Super()
 {
-	// set default pawn class to our Blueprinted character
+	//// set default pawn class to our Blueprinted character
 //	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Characters/Main_Character/Behaviour/BP_Main_Character"));
 //	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
-	// use our custom HUD class
+	//// use our custom HUD class
 //	HUDClass = ABlackCyborgHUD::StaticClass();
 }

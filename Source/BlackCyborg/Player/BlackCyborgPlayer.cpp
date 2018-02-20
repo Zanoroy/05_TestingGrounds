@@ -58,7 +58,7 @@ ABlackCyborgPlayer::ABlackCyborgPlayer()
 	VR_Gun->CastShadow = false;
 	VR_Gun->SetupAttachment(R_MotionController);
 	VR_Gun->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-
+	
 	VR_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("VR_MuzzleLocation"));
 	VR_MuzzleLocation->SetupAttachment(VR_Gun);
 	VR_MuzzleLocation->SetRelativeLocation(FVector(0.000004, 53.999992, 10.000000));
@@ -75,6 +75,7 @@ void ABlackCyborgPlayer::BeginPlay()
 	FVector Startpoint = Mesh1P->GetSocketLocation(FName("GripPoint"));
 	FRotator Rotation = Mesh1P->GetForwardVector().Rotation();
 	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Instigator = this;
 
 	if (GuardGunBlueprint == NULL)
 	{
