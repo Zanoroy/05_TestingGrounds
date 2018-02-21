@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "GameFramework/Character.h"
 #include "GuardGun.generated.h"
 
 UCLASS()

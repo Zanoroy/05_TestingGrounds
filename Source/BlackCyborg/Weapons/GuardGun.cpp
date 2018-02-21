@@ -4,6 +4,8 @@
 #include "BlackCyborgProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimInstance.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
 #include "../Character/Mannequin.h"
 
 // Sets default values
@@ -30,7 +32,6 @@ AGuardGun::AGuardGun()
 void AGuardGun::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
